@@ -1,7 +1,7 @@
-const { BadRequestError, InternalServerError, Conflict, NotFoundError } = require("../Middleware/Error/error");
+const { BadRequestError, InternalServerError, Conflict, NotFoundError, AuthError } = require("../Middleware/Error/error");
 const Admin = require("../Models/admin.model");
-const { adminSignupSchema } = require("./Schema/admin.schema")
-
+const { adminSignupSchema } = require("./Schema/admin.schema");
+const { comparePassword, generateJWT } = require("./Tools/security");
 
 
 const adminRegister = async (req, res, next)=>{
@@ -40,13 +40,15 @@ const adminLogin = async (req, res, next)=>{
 
         if (!isExist) throw new NotFoundError("Invalid Admin ID"); 
 
-
+        if(!comparePassword(password, isExist.password)) throw new AuthError("Incorrect Email or Password"); 
+        const token = generateJWT(email);
+        // res.cookie("EntryInsight", token, {httpOnly:true})
+        res.status(200).send({success:true, message:"Login Successful", token});
 
     } catch (error) {
         next(new InternalServerError(error.message));
     }
 }
-
 
 
 

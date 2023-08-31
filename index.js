@@ -3,6 +3,7 @@ const express = require('express');
 const user_routes = require('./routes/userRoutes.route');
 const { errorHandlingMiddleware } = require('./Middleware/Error/middleware');
 const dotenv = require('dotenv');
+const admin_routes = require('./routes/admin.route');
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use(express.static('public'))
 
 //Sever Api
 app.use('/api', user_routes)
+app.use('/api/admin', admin_routes)
 
 //Invalid Pages
 app.get('/*', (req, res)=>{

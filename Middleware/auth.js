@@ -1,3 +1,4 @@
+const { verifyJWT } = require("../Controllers/Tools/security");
 const { AuthError, InternalServerError } = require("./Error/error");
 
 
@@ -14,8 +15,13 @@ const auth = async (req, res, next) =>{
             throw new AuthError("Invalid authorization type");
         }
 
-        //
+        const isVerified = verifyJWT(token);
+        if(!isVerified) throw new AuthError("Token Expired or Invalid Token")
+        next();
+        
     } catch (error) {
         next(new InternalServerError(error.message));
     }
 }
+
+module.exports = auth;
